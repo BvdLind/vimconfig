@@ -38,13 +38,16 @@ Plugin 'KabbAmine/zeavim.vim'
 Plugin 'itmammoth/doorboy.vim'
 Plugin 'AndrewRadev/splitjoin.vim'
 Plugin 'airblade/vim-accent'
+Plugin 'machakann/vim-highlightedyank'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
 
 " Color Themes
 Plugin 'ayu-theme/ayu-vim'
+Plugin 'morhetz/gruvbox'
+Plugin 'joshdick/onedark.vim'
 "Plugin 'ajh17/spacegray.vim'
 "Plugin 'dracula/vim'
-"Plugin 'joshdick/onedark.vim'
-"Plugin 'morhetz/gruvbox'
 "Plugin 'tomasr/molokai'
 "Plugin 'jacoborus/tender.vim'
 "Plugin 'arcticicestudio/nord-vim'
@@ -78,9 +81,7 @@ set ttyfast
 set mouse=a
 set magic
 set noshowmode
-set foldmethod=manual
 set background=dark
-
 
 " Search
 set hlsearch
@@ -137,9 +138,10 @@ nnoremap <leader>WT :set wrap!<CR>
 " Fix missing syntax highlighting ts files
 au BufRead,BufNewFile *.ts   setfiletype typescript
 
-" Format on save with prettier
+" Format prettier
 let g:prettier#autoformat = 1
 let g:prettier#config#single_quote = 'true'
+nnoremap <leader>p :Prettier<CR>
 
 " Latex
 map <leader>co :!pdflatex % && start %:r.pdf<CR>
@@ -171,6 +173,10 @@ let g:ctrlp_custom_ignore = {
    \ 'file': '\v\.(exe|so|dll)$',
    \ 'link': 'some_bad_symbolic_links',
    \ }
+let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<cr>'],
+    \ 'AcceptSelection("t")': ['<localleader>'],
+    \ }
 
 " Access my vimrc mappings
 nnoremap <leader>sev :vsplit $MYVIMRC<CR>
@@ -267,13 +273,6 @@ nmap <silent> <leader>/ :nohlsearch<CR>
 map F :w!<CR>
 imap  <esc>:w!<CR>i
 
-" Fix linewise visual selection of various text objects
-nnoremap VV V
-nnoremap Vit vitVkoj
-nnoremap Vat vatV
-nnoremap Vab vabV
-nnoremap VaB vaBV
-
 " Fugitive mappings
 nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gs :Gstatus<cr>
@@ -342,7 +341,7 @@ imap <F1> <ESC>
 
 " Shell inside vim
 noremap <silent> Z :suspend<CR>
-"set shell=C:\tools\Cmder\vendor\git-for-windows\bin\bash.exe
+set shell=C:\tools\Cmder\vendor\git-for-windows\bin\bash.exe
 tnoremap <C-W>h <C-\><C-n><C-w>h
 tnoremap <C-W>j <C-\><C-n><C-w>j
 tnoremap <C-W>k <C-\><C-n><C-w>k
@@ -383,14 +382,18 @@ let g:ale_lint_delay = 100   " millisecs
 nmap <silent> <C-K> <Plug>(ale_previous_wrap)
 nmap <silent> <C-J> <Plug>(ale_next_wrap)
 nmap <Localleader>f <Plug>(ale_fix)
+map <leader>at :ALEToggle<CR>
 
 let g:doorboy_additional_brackets = {
   \ 'html': ['<>']
   \ }
 
-map <leader>at :ALEToggle<CR>
-
-nmap <leader>i :Zeavim!<CR>
+" Zeavim
+nmap <leader>i :Zeavim<CR>
+nmap <leader><leader>i :Zeavim!<CR>
+let g:zv_zeal_executable = has('win32')
+\ ? 'C:\Program Files' . '\Zeal\zeal.exe'
+\ : 'zeal'
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -420,11 +423,6 @@ let g:lightline = {
 " vim-move modifier key
 let g:move_key_modifier = 'C'
 
-" Location to zeal executable
-let g:zv_zeal_executable = has('win32')
-\ ? 'C:\Program Files' . '\Zeal\zeal.exe'
-\ : 'zeal'
-
 " Function to get list of commits to be used in startify list
 function! s:list_commits()
   let git = 'git -C C:'
@@ -453,14 +451,3 @@ let g:startify_lists = [
       \ { 'type': 'bookmarks', 'header': ['   Bookmarks']       },
       \ { 'type': function('s:list_commits'), 'header': ['   Commits']      },
       \ ]
-"let g:startify_custom_header = [
-"\' __/\\\________/\\\___/\\\\\\\\\\\___/\\\\____________/\\\\_        ',
-"\'  _\/\\\_______\/\\\__\/////\\\///___\/\\\\\\________/\\\\\\_       ',
-"\'   _\//\\\______/\\\_______\/\\\______\/\\\//\\\____/\\\//\\\_      ',
-"\'    __\//\\\____/\\\________\/\\\______\/\\\\///\\\/\\\/_\/\\\_     ',
-"\'     ___\//\\\__/\\\_________\/\\\______\/\\\__\///\\\/___\/\\\_    ',
-"\'      ____\//\\\/\\\__________\/\\\______\/\\\____\///_____\/\\\_   ',
-"\'       _____\//\\\\\___________\/\\\______\/\\\_____________\/\\\_  ',
-"\'        ______\//\\\_________/\\\\\\\\\\\__\/\\\_____________\/\\\_ ',
-"\'         _______\///_________\///////////___\///______________\///__',
-"\ ]
