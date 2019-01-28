@@ -181,7 +181,8 @@ let g:ctrlp_prompt_mappings = {
 " Access my vimrc mappings
 nnoremap <leader>sev :vsplit $MYVIMRC<CR>
 nnoremap <leader>ev :e $MYVIMRC<CR>
-nnoremap <leader>sv :w<CR> :so $MYVIMRC<CR>
+"nnoremap <leader>sv :w<CR> :so $MYVIMRC<CR>
+nnoremap <leader>sv :w<CR> :so C:/Users/Bas/.vimrc<CR>
 
 " Abbreviations
 iab @@ bvanderlinden1@gmail.com
@@ -202,7 +203,6 @@ let ayucolor="mirage" " for mirage version of theme
 "let ayucolor="dark"   " for dark version of theme
 colorscheme ayu
 
-
 if !has("gui_running")
   if !has("nvim")
     set term=xterm
@@ -212,7 +212,7 @@ if !has("gui_running")
   let &t_AF="\e[38;5;%dm"
 endif
 
-"set shortmess+=I  " hide the launch screen (startify deals with this already)
+set shortmess+=I  " hide the launch screen (startify deals with this already)
 
 " Remapping backaspace behavior because of xterm
 inoremap <Char-0x07F> <BS>
@@ -347,10 +347,10 @@ tnoremap <C-W>j <C-\><C-n><C-w>j
 tnoremap <C-W>k <C-\><C-n><C-w>k
 tnoremap <C-W>l <C-\><C-n><C-w>l
 
-" Escaping with j;
-inoremap j; <Esc>
-xnoremap j; <Esc>
-cnoremap j; <C-c>
+" Escaping with j; !!!Theres problems with this (visual selection is not as fast )
+"inoremap j; <Esc>
+"xnoremap j; <Esc>
+"cnoremap j; <C-c>
 
 " Redraw screen mapping
 nnoremap <leader>r :redraw!<CR>
