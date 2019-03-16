@@ -41,6 +41,9 @@ Plugin 'airblade/vim-accent'
 Plugin 'machakann/vim-highlightedyank'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
+Plugin 'nelsyeung/twig.vim'
+Plugin 'ludovicchabant/vim-gutentags'
+Plugin 'gioele/vim-autoswap'
 
 " Color Themes
 Plugin 'ayu-theme/ayu-vim'
@@ -82,6 +85,7 @@ set mouse=a
 set magic
 set noshowmode
 set background=dark
+set completeopt-=preview
 
 " Search
 set hlsearch
@@ -104,24 +108,12 @@ map <F7> :set spelllang=nl<CR>
 
 autocmd BufWritePre * %s/\s\+$//e " Automatically deletes trailing whitespace
 
-" Smart mappings command mode
-cno $h e ~/
-cno $d e ~/Desktop/
-cno $j e ./
-cno $c e <C-\>eCurrentFileDir("e")<cr>
-
 func! CurrentFileDir(cmd)
     return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
 
-" Splitting and movement between splits
+" Split sizing and -location
 set splitbelow splitright
-map <C-Left> <C-w>h
-map <C-Down> <C-w>j
-map <C-Up> <C-w>k
-map <C-Right> <C-w>l
-
-" Split sizing
 nnoremap <silent> <leader>> :5winc <<CR>
 nnoremap <silent> <leader>< :5winc ><CR>
 nnoremap <silent> <leader>+ :5winc +<CR>
@@ -136,7 +128,7 @@ map <C-p> "+P
 nnoremap <leader>WT :set wrap!<CR>
 
 " Fix missing syntax highlighting ts files
-au BufRead,BufNewFile *.ts   setfiletype typescript
+au BufRead,BufNewFile *.ts setfiletype typescript
 
 " Format prettier
 let g:prettier#autoformat = 1
@@ -144,15 +136,18 @@ let g:prettier#config#single_quote = 'true'
 nnoremap <leader>p :Prettier<CR>
 
 " Latex
+let g:tex_flavor = "latex"
 map <leader>co :!pdflatex % && start %:r.pdf<CR>
-map <leader>x :!xelatex % && start %:r.pdf<CR>
+map <leader>xe :!xelatex % && start %:r.pdf<CR>
+map <leader>bi :!bibtex8 %:r<CR>
+
 let g:livepreview_previewer = 'mupdf'
 
 " Open current file in chrome
 map <leader>cr :!chrome %<CR>
 
 " Run live-server for current file
-map <leader>l :!live-server %<CR>
+map <leader>L :!live-server %<CR>
 
 " Netrw
 let g:netrw_banner = 0 " Disable banner
@@ -168,20 +163,21 @@ set runtimepath^=~/.vim/bundle/ctrlp.vim
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_switch_buffer = 0
 let g:ctrlp_map = '<leader>P'
+let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']"
 let g:ctrlp_custom_ignore = {
    \ 'dir':  '\v[\/](\.git|_site|dist|node_modules)$',
-   \ 'file': '\v\.(exe|so|dll)$',
+   \ 'file': '\v\.(exe|so|dll|gitignore)$',
    \ 'link': 'some_bad_symbolic_links',
    \ }
 let g:ctrlp_prompt_mappings = {
     \ 'AcceptSelection("e")': ['<cr>'],
     \ 'AcceptSelection("t")': ['<localleader>'],
     \ }
+nnoremap <leader>. :CtrlPTag<cr>
 
 " Access my vimrc mappings
 nnoremap <leader>sev :vsplit $MYVIMRC<CR>
 nnoremap <leader>ev :e $MYVIMRC<CR>
-"nnoremap <leader>sv :w<CR> :so $MYVIMRC<CR>
 nnoremap <leader>sv :w<CR> :so C:/Users/Bas/.vimrc<CR>
 
 " Abbreviations
@@ -193,14 +189,15 @@ iab lllorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacu
 
 nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel " Surround with double quotes
 
+" File path completion
+imap <localleader><localleader> <C-X><C-F>
+
 set directory^=$HOME/.vim/tmp// " Swap files are stored here
 
 set statusline=%f\ -\ FileType:\ %y
 
 set termguicolors     " enable true colors support
-"let ayucolor="light"  " for light version of theme
 let ayucolor="mirage" " for mirage version of theme
-"let ayucolor="dark"   " for dark version of theme
 colorscheme ayu
 
 if !has("gui_running")
@@ -211,8 +208,6 @@ if !has("gui_running")
   let &t_AB="\e[48;5;%dm"
   let &t_AF="\e[38;5;%dm"
 endif
-
-set shortmess+=I  " hide the launch screen (startify deals with this already)
 
 " Remapping backaspace behavior because of xterm
 inoremap <Char-0x07F> <BS>
@@ -260,13 +255,16 @@ nnoremap g, g,zz
 nnoremap <c-o> <c-o>zz
 
 " Easier to type motions
-noremap H ^
-noremap L $
-vnoremap L g_
+noremap <localleader>m ^
+noremap <localleader>. $
+vnoremap <localleader>. g_
 
 " Map ; to : for fewer keystrokes
 nnoremap ; :
 vmap ; :
+
+inoremap <C-Space> <C-x><C-o>
+
 nmap <silent> <leader>/ :nohlsearch<CR>
 
 " Easier saving
@@ -274,6 +272,7 @@ map F :w!<CR>
 imap  <esc>:w!<CR>i
 
 " Fugitive mappings
+set diffopt=vertical
 nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gs :Gstatus<cr>
 nnoremap <leader>gw :Gwrite<cr>
@@ -302,28 +301,19 @@ map  <leader>f <Plug>(easymotion-bd-f)
 nmap <leader>f <Plug>(easymotion-overwin-f)
 
 " Move to line
-map <leader>L <Plug>(easymotion-bd-jk)
-nmap <leader>L <Plug>(easymotion-overwin-line)
+map <leader>l <Plug>(easymotion-bd-jk)
+nmap <leader>l <Plug>(easymotion-overwin-line)
 
 " Move to word
 map  <leader>w <Plug>(easymotion-bd-w)
 nmap <leader>w <Plug>(easymotion-overwin-w)
 
 " Vim tabs shortcuts
-nnoremap <leader>tp  :tabprev<CR>
-nnoremap <leader>tn  :tabnext<CR>
-nnoremap <leader>te  :tabedit<Space>
-nnoremap <leader>tc  :tabclose<CR>
+nnoremap <C-Left> :tabprev<CR>
+nnoremap <C-Right> :tabnext<CR>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
-" Delete current file in buffer
-nnoremap <leader>r :call delete(expand('%')) \| bdelete!<CR>
-
-" Quitting and discarding
-nnoremap <leader>X :q!<CR>
-nnoremap <leader>Q :qall<CR>
 
 " Clear search registry
 nnoremap <silent> <leader>/ :nohlsearch<CR>"
@@ -335,22 +325,14 @@ nnoremap <Localleader>z :%s#\<<C-r>=expand("<cword>")<CR>\>#
 nnoremap > >>_
 nnoremap < <<_
 
-" Wanting to press escape but pressing <F1>
-nmap <F1> <Esc>
-imap <F1> <ESC>
-
 " Shell inside vim
 noremap <silent> Z :suspend<CR>
-set shell=C:\tools\Cmder\vendor\git-for-windows\bin\bash.exe
+
+"set shell=C:\tools\Cmder\vendor\git-for-windows\bin\bash.exe
 tnoremap <C-W>h <C-\><C-n><C-w>h
 tnoremap <C-W>j <C-\><C-n><C-w>j
 tnoremap <C-W>k <C-\><C-n><C-w>k
 tnoremap <C-W>l <C-\><C-n><C-w>l
-
-" Escaping with j; !!!Theres problems with this (visual selection is not as fast )
-"inoremap j; <Esc>
-"xnoremap j; <Esc>
-"cnoremap j; <C-c>
 
 " Redraw screen mapping
 nnoremap <leader>r :redraw!<CR>
@@ -359,6 +341,7 @@ nnoremap <leader>r :redraw!<CR>
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'typescript': ['tslint'],
+\   'php': ['php'],
 \}
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -400,8 +383,19 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-"Goyo mapping
+" Goyo mapping
 nnoremap <leader>G :Goyo<CR>
+
+" Ctags & Gutentags
+let g:gutentags_cache_dir = '~/.vim/gutentags'
+let g:gutentags_ctags_exclude = ['*.css', '*.html', '*.js', '*.json', '*.xml',
+                            \ '*.phar', '*.ini', '*.rst', '*.md',
+                            \ '*vendor/*/test*', '*vendor/*/Test*',
+                            \ '*vendor/*/fixture*', '*vendor/*/Fixture*',
+                            \ '*var/cache*', '*var/log*']
+nnoremap <S-h> <C-]>
+nnoremap <S-l> <C-T>
+map <leader>gct :!ctags<CR>
 
 " Lightline config
 let g:lightline = {
