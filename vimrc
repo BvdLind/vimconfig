@@ -43,7 +43,7 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'nelsyeung/twig.vim'
 Plugin 'ludovicchabant/vim-gutentags'
-Plugin 'gioele/vim-autoswap'
+"Plugin 'gioele/vim-autoswap'
 
 " Color Themes
 Plugin 'ayu-theme/ayu-vim'
@@ -61,7 +61,7 @@ call vundle#end()
 filetype plugin on
 
 "Workaround for backspace problem
-imap ^H <Left><Del>
+"imap ^H <Left><Del>
 
 " Basic stuff
 syntax on
@@ -95,11 +95,11 @@ set smartcase
 
 " Make sure Vim returns to the same line when you reopen a file.
 augroup line_return
-    au!
-    au BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \     execute 'normal! g`"zvzz' |
-        \ endif
+   au!
+   au BufReadPost *
+       \ if line("'\"") > 0 && line("'\"") <= line("$") |
+       \     execute 'normal! g`"zvzz' |
+       \ endif
 augroup END
 
 " Spelling
@@ -109,7 +109,7 @@ map <F7> :set spelllang=nl<CR>
 autocmd BufWritePre * %s/\s\+$//e " Automatically deletes trailing whitespace
 
 func! CurrentFileDir(cmd)
-    return a:cmd . " " . expand("%:p:h") . "/"
+   return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
 
 " Split sizing and -location
@@ -165,14 +165,14 @@ let g:ctrlp_switch_buffer = 0
 let g:ctrlp_map = '<leader>P'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']"
 let g:ctrlp_custom_ignore = {
-   \ 'dir':  '\v[\/](\.git|_site|dist|node_modules)$',
-   \ 'file': '\v\.(exe|so|dll|gitignore)$',
-   \ 'link': 'some_bad_symbolic_links',
-   \ }
+  \ 'dir':  '\v[\/](\.git|_site|dist|node_modules)$',
+  \ 'file': '\v\.(exe|so|dll|gitignore)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
 let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<cr>'],
-    \ 'AcceptSelection("t")': ['<localleader>'],
-    \ }
+   \ 'AcceptSelection("e")': ['<cr>'],
+   \ 'AcceptSelection("t")': ['<localleader>'],
+   \ }
 nnoremap <leader>. :CtrlPTag<cr>
 
 " Access my vimrc mappings
@@ -197,7 +197,7 @@ set directory^=$HOME/.vim/tmp// " Swap files are stored here
 set statusline=%f\ -\ FileType:\ %y
 
 set termguicolors     " enable true colors support
-let ayucolor="mirage" " for mirage version of theme
+let ayucolor="dark" " for mirage version of theme
 colorscheme ayu
 
 if !has("gui_running")
@@ -309,8 +309,8 @@ map  <leader>w <Plug>(easymotion-bd-w)
 nmap <leader>w <Plug>(easymotion-overwin-w)
 
 " Vim tabs shortcuts
-nnoremap <C-Left> :tabprev<CR>
-nnoremap <C-Right> :tabnext<CR>
+nnoremap <F8> :tabprev<CR>
+nnoremap <F9> :tabnext<CR>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
@@ -329,10 +329,10 @@ nnoremap < <<_
 noremap <silent> Z :suspend<CR>
 
 "set shell=C:\tools\Cmder\vendor\git-for-windows\bin\bash.exe
-tnoremap <C-W>h <C-\><C-n><C-w>h
-tnoremap <C-W>j <C-\><C-n><C-w>j
-tnoremap <C-W>k <C-\><C-n><C-w>k
-tnoremap <C-W>l <C-\><C-n><C-w>l
+nmap <C-W>h <C-w>h
+nmap <C-W>j <C-w>j
+nmap <C-W>k <C-w>k
+nmap <C-W>l <C-w>l
 
 " Redraw screen mapping
 nnoremap <leader>r :redraw!<CR>
